@@ -9,7 +9,7 @@ import (
 	"io"
 	"strings"
 	"math"
-    "regexp"
+	"regexp"
 	"flag"
 );
 
@@ -38,24 +38,6 @@ func main() {
 	maxLength := flag.Int("max", 0, "Maximum Length")
 	specialCharLengthReq := flag.Int("sp", 0, "Minimum amount of special chars required")
 	flag.Parse()
-
-	/*minLength, err := strconv.Atoi(args[1])
-    if err != nil {
-		fmt.Println("Min length must be an integer: ", err)
-		return
-    }
-	
-	maxLength, err := strconv.Atoi(args[2])
-    if err != nil {
-		fmt.Println("Max length must be an integer: ", err)
-		return
-    }
-
-	specialCharLengthReq, err := strconv.Atoi(args[3])
-    if err != nil {
-		fmt.Println("Special char requirement length must be an integer: ", err)
-		return
-    }*/
 
 	if *maxLength > 0 { 
 		if *minLength > *maxLength {
@@ -217,8 +199,6 @@ func ProcessChunk(chunk []byte, linesPool *sync.Pool, stringPool *sync.Pool, opt
 				}
 
 				if opts.hasSpecialCharReq {
-					// parse special chars
-
 					var re = regexp.MustCompile(`(?m)([^A-Za-z0-9])`)
 					specialChars := re.FindAllString(text, -1)
 					if len(specialChars) < opts.minSpecialChars {
