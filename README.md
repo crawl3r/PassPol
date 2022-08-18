@@ -5,7 +5,7 @@ Get the passwords that adhere to your target policy out of your password dumps a
 Install:  
 
 ```
-todo
+go install github.com/crawl3r/passpol@latest
 ```
   
 Expects a wordlist with a single password per new line (see common100.txt for example).  
