@@ -30,7 +30,11 @@ Usage:
 ./passpol -f "passwords.txt" -sp 2
 ```
 
-Currently dumps a EOF and time to parse to stdout, ignore these. Currently testing with some big files to see how we do. :)
+Currently dumps a EOF and time to parse to stdout, ignore these. Currently testing with some big files to see how we do :) This can be removed altogether with:
+
+```
+./passpol -f "passwords.txt" -min 5 -max 10 | sed '1d;$d;/^$/d' > clean.txt
+```
   
 --  
   
