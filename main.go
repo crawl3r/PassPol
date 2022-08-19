@@ -25,17 +25,28 @@ type options struct {
 	hasMaxLength bool
 	maxLength int
 
+	hasLowerCaseReq bool
+	minLowerCase int
+
+	hasUpperCaseReq bool
+	minUpperCase int
+
+	hasNumberReq bool
+	minNumber int
+
 	hasSpecialCharReq bool
 	minSpecialChars int
 } 
 
 func main() {
-
 	s := time.Now()
 	
-	fileName := flag.String("f", "", "Password list")
+	fileName := flag.String("f", "", "Password list file")
 	minLength := flag.Int("min", 0, "Minimum Length")
 	maxLength := flag.Int("max", 0, "Maximum Length")
+	minLowerCase := flag.Int("lcase", 0, "Minimum Lower Case (a-z)")
+	minUpperCase := flag.Int("ucase", 0, "Minimum Upper Case (A-Z)")
+	minNumbers := flag.Int("num", 0, "Minimum Numbers (0-9)")
 	specialCharLengthReq := flag.Int("sp", 0, "Minimum amount of special chars required")
 	flag.Parse()
 
@@ -51,6 +62,12 @@ func main() {
 	opts.minLength = *minLength
 	opts.hasMaxLength = *maxLength > 0
 	opts.maxLength = *maxLength
+	opts.hasLowerCaseReq = *minLowerCase > 0
+	opts.minLowerCase = *minLowerCase
+	opts.hasUpperCaseReq = *minUpperCase > 0
+	opts.minUpperCase = *minUpperCase
+	opts.hasNumberReq = *minNumbers > 0
+	opts.minNumber = *minNumbers
 	opts.hasSpecialCharReq = *specialCharLengthReq > 0
 	opts.minSpecialChars = *specialCharLengthReq
 
@@ -104,7 +121,6 @@ func main() {
 }
 
 func Process(f *os.File, opts *options) error {
-
 	linesPool := sync.Pool{New: func() interface{} {
 		lines := make([]byte, 250*1024)
 		return lines
@@ -191,16 +207,43 @@ func ProcessChunk(chunk []byte, linesPool *sync.Pool, stringPool *sync.Pool, opt
 				if opts.hasMinLength && currentLength < opts.minLength {
 					isValid = false
 					continue
-				} 
+				}
 				
 				if opts.hasMaxLength && currentLength > opts.maxLength {
 					isValid = false
 					continue
 				}
 
+				if opts.hasLowerCaseReq {
+					var lowerCaseRe = regexp.MustCompile(`[a-z]`)
+					lowerCaseChars := lowerCaseRe.FindAllString(text, -1)
+					if len(lowerCaseChars) < opts.minLowerCase {
+						isValid = false
+						continue
+					}
+				}
+
+				if opts.hasUpperCaseReq {
+					var upperCaseRe = regexp.MustCompile(`[A-Z]`)
+					upperCaseChars := upperCaseRe.FindAllString(text, -1)
+					if len(upperCaseChars) < opts.minUpperCase {
+						isValid = false
+						continue
+					}
+				}
+
+				if opts.hasNumberReq {
+					var numberRe = regexp.MustCompile(`[0-9]`)
+					numberChars := numberRe.FindAllString(text, -1)
+					if len(numberChars) < opts.minNumber {
+						isValid = false
+						continue
+					}
+				}
+
 				if opts.hasSpecialCharReq {
-					var re = regexp.MustCompile(`(?m)([^A-Za-z0-9])`)
-					specialChars := re.FindAllString(text, -1)
+					var specialCharsRe = regexp.MustCompile(`(?m)([^A-Za-z0-9])`)
+					specialChars := specialCharsRe.FindAllString(text, -1)
 					if len(specialChars) < opts.minSpecialChars {
 						isValid = false
 						continue

@@ -1,9 +1,9 @@
 # PassPol  
   
 Get the passwords that adhere to your target policy out of your password dumps and wordlists.  
-
+  
 Install:  
-
+  
 ```
 go install github.com/crawl3r/passpol@latest
 ```
@@ -18,7 +18,7 @@ cantcode
 ```
   
 Usage:  
-
+  
 ```
 # only get passwords with more than 4 characters
 ./passpol -f "passwords.txt" -min 4
@@ -28,10 +28,13 @@ Usage:
 
 # only get passwords that have more than 2 special characters re: `(?m)([^A-Za-z0-9])`
 ./passpol -f "passwords.txt" -sp 2
+
+# only get passwords that have more than 1 lower case, 1 upper case and 1 number:
+./passpol -f "passwords.txt" -lcase 1 -ucase 1 -num 1
 ```
-
+  
 Currently dumps a EOF and time to parse to stdout, ignore these. Currently testing with some big files to see how we do :) This can be removed altogether with:
-
+  
 ```
 ./passpol -f "passwords.txt" -min 5 -max 10 | sed '1d;$d;/^$/d' > clean.txt
 ```
